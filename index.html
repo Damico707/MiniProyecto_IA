@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Resumen de Correos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="index.css">
+</head>
+
+
+<body>
+
+  <main class="contenedor">
+
+    <!-- =========================
+         ENCABEZADO
+    ========================== -->
+    <header class="header">
+
+      <div class="titulo-area">
+
+        <div class="titulo-principal">
+
+          <span class="decoracion roja">●</span>
+
+          <h1>
+            Resumen<br>
+            de Correos
+          </h1>
+
+          <span class="decoracion amarilla">✦</span>
+
+        </div>
+
+        <p>Lo importante, en menos tiempo.</p>
+
+      </div>
+
+
+      <div class="usuario">
+
+        <div class="avatar">
+          J
+        </div>
+
+        <div>
+          <span class="hola">¡Hola!</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================
+         FILTROS
+    ========================== -->
+    <section class="filtros-card">
+
+      <div class="filtros">
+
+        <button
+          class="filtro activo"
+          onclick="cargarPorPeriodo('semana')"
+        >
+          Últimos 7 días
+        </button>
+
+
+        <button
+          class="filtro"
+          onclick="cargarPorPeriodo('hoy')"
+        >
+          Día de hoy
+        </button>
+
+
+        <button
+          class="filtro"
+          onclick="cargarPorPeriodo('mes')"
+        >
+          Mensual
+        </button>
+
+      </div>
+
+
+      <div class="mensaje-filtro">
+
+        <span class="flecha">↪</span>
+
+        <p>
+          Filtra tus correos<br>
+          para ver lo más relevante.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         RESUMEN DE RELEVANCIA
+    ========================== -->
+    <section class="destacados">
+
+      <button
+        class="destacados-header"
+        id="btnDestacados"
+      >
+
+        <div class="destacados-titulo">
+
+          <div class="estrella-box">
+            ★
+          </div>
+
+          <div>
+
+            <h2>Resumen de relevancia</h2>
+
+            <p>
+              Un resumen personal de tus correos descrito por la IA según la relevancia de estos.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <span
+          class="arrow"
+          id="arrowDestacados"
+        >
+          ⌄
+        </span>
+
+      </button>
+
+
+      <div
+        class="destacados-contenido"
+        id="contenidoDestacados"
+      >
+
+        <article class="correo-destacado">
+
+          <p id="textoResumen">
+            Selecciona un periodo para generar el resumen.
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         TODOS LOS CORREOS
+    ========================== -->
+    <section class="todos-correos">
+
+      <div class="correos-header">
+
+        <div class="todos-titulo">
+
+          <div class="mail-icon">
+            ✉
+          </div>
+
+          <div>
+
+            <h2>Todos los correos</h2>
+
+            <p>
+              Explora todos tus correos en un solo lugar.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="buscador">
+
+          <span>⌕</span>
+
+          <input
+            type="text"
+            placeholder="Buscar correos..."
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- CABECERA DE LA TABLA -->
+      <div class="tabla tabla-header">
+
+        <div></div>
+
+        <div>Remitente</div>
+
+        <div>Asunto</div>
+
+        <div>Vista previa</div>
+
+        <div>Fecha</div>
+
+        <div></div>
+
+      </div>
+
+
+      <!-- AQUÍ JAVASCRIPT INSERTA LOS CORREOS -->
+      <div id="listaCorreos"></div>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+    <footer class="footer">
+
+      <div class="creditos">
+
+        <p>
+          UN PROYECTO CREADO POR
+          <br><br>
+
+          ✦ Santiago Rueda
+          <br>
+
+          ✦ Damian Rangel
+        </p>
+
+      </div>
+
+
+      <div class="taza">
+
+        <img
+          src="images/caballa.png"
+          alt="burra"
+        >
+
+      </div>
+
+    </footer>
+
+  </main>
+
+
+  <!-- =========================
+       ABRIR / CERRAR RESUMEN
+  ========================== -->
+  <script>
+
+    const boton =
+      document.getElementById("btnDestacados");
+
+    const contenido =
+      document.getElementById("contenidoDestacados");
+
+    const flecha =
+      document.getElementById("arrowDestacados");
+
+
+    boton.addEventListener("click", () => {
+
+      contenido.classList.toggle("oculto");
+
+      flecha.classList.toggle("rotar");
+
+    });
+
+  </script>
+
+
+  <!-- JS PRINCIPAL -->
+  <script src="script.js"></script>
+
+</body>
+
+</html>
