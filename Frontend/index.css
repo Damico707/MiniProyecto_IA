@@ -208,18 +208,10 @@ body {
 .filtro:hover {
   transform: translateY(-3px);
 
-  border-color: #5a6f85;
+  background-color: #f72525;
+  border-color: #222d3a;
 }
 
-
-.filtro.activo {
-  background: #ec1d25;
-
-  border-color: #ff3038;
-
-  box-shadow:
-    0 8px 20px rgba(255, 32, 39, 0.3);
-}
 
 
 .mensaje-filtro {

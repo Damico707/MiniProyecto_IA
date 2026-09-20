@@ -138,6 +138,27 @@ async function cargarResumen(periodo) {
 
 }
 
+/*async function cargarPorPeriodo(periodo, boton) {
 
-// IMPORTANTE
+    // Quitar rojo a todos
+    document
+        .querySelectorAll(".filtro")
+        .forEach(btn => {
+            btn.classList.remove("activo");
+        });
+
+    // Poner rojo al botón elegido
+    boton.classList.add("activo");
+
+
+    const respuesta = await fetch(
+        `http://localhost:8080/api/correos?periodo=${periodo}`
+    );
+
+    const correos = await respuesta.json();
+
+    mostrarCorreos(correos);
+
+    cargarResumen(periodo);
+}*/
 cargarPorPeriodo("semana");
