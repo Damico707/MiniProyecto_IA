@@ -1,0 +1,158 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resumen-correos",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1d675995-ba94-4804-808f-4ff8b4cc0202",
+      "name": "Recibir periodo",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        608,
+        160
+      ],
+      "webhookId": "resumen-correos"
+    },
+    {
+      "parameters": {
+        "jsCode": "const correos = $input.all().map(item => item.json);\n\nconst webhook = $('Recibir periodo').first().json;\nconst periodo = webhook.body?.periodo || 'semana';\n\nif (correos.length === 0) {\n  return [\n    {\n      json: {\n        periodo,\n        cantidad: 0,\n        prompt: `No existen correos registrados para el periodo ${periodo}. Responde brevemente indicando que no hay correos disponibles para generar un resumen.`\n      }\n    }\n  ];\n}\n\nconst correosTexto = correos.map((correo, index) => {\n  return `\nCORREO ${index + 1}\nRemitente: ${correo.remitente || 'Desconocido'}\nEmail: ${correo.emailRemitente || 'No disponible'}\nAsunto: ${correo.asunto || 'Sin asunto'}\nFecha: ${correo.fecha || 'Sin fecha'}\nContenido: ${correo.contenido || 'Sin contenido'}\n-------------------------`;\n}).join('\\n');\n\nconst prompt = `\nEres un asistente encargado de analizar correos electrónicos.\n\nAnaliza los correos correspondientes al periodo: ${periodo}.\n\nCantidad de correos: ${correos.length}.\n\nGenera un resumen breve, claro y útil para el usuario.\n\nPrioriza:\n- tareas pendientes\n- fechas importantes\n- reuniones\n- entregas\n- solicitudes\n- compromisos\n- mensajes que requieran atención\n\nNo inventes información.\nNo agregues información que no aparezca en los correos.\nNo hagas un resumen correo por correo.\nGenera como máximo 2 o 3 párrafos.\n\nCORREOS:\n${correosTexto}\n`;\n\nreturn [\n  {\n    json: {\n      periodo,\n      cantidad: correos.length,\n      prompt\n    }\n  }\n];"
+      },
+      "id": "01e6a61e-faf7-473c-894f-9ba1a50ed267",
+      "name": "Preparar correos para IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}"
+      },
+      "id": "8a601dd1-49ce-4c02-94bc-501ad7eaddf0",
+      "name": "Generar resumen IA",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1376,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"resumen\": {{ JSON.stringify($json.text || $json.output || '') }}\n}",
+        "options": {}
+      },
+      "id": "dacaefc0-3580-4b4f-9868-5bf2d0e139c2",
+      "name": "Devolver resumen",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1680,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1312,
+        368
+      ],
+      "id": "ec5f19a9-62e2-439b-a36d-6c9d084286b3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fJtYw7Dsgb0O9kUF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:8080/api/correos?periodo={{ $('Recibir periodo').item.json.body.periodo }}",
+        "options": {}
+      },
+      "id": "eb2ddf05-aa68-4138-9901-a9ea96087f37",
+      "name": "Obtener correos Spring",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        848,
+        160
+      ]
+    }
+  ],
+  "connections": {
+    "Recibir periodo": {
+      "main": [
+        [
+          {
+            "node": "Obtener correos Spring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar correos para IA": {
+      "main": [
+        [
+          {
+            "node": "Generar resumen IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar resumen IA": {
+      "main": [
+        [
+          {
+            "node": "Devolver resumen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generar resumen IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener correos Spring": {
+      "main": [
+        [
+          {
+            "node": "Preparar correos para IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7ff72d39e2fe812840001734086dbe98b391fef6f94a69c37a7201c2d33bd4e"
+  }
+}

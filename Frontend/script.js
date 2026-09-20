@@ -138,7 +138,27 @@ async function cargarResumen(periodo) {
 
 }
 
-/*async function cargarPorPeriodo(periodo, boton) {
+async function seleccionarPeriodo(periodo, boton) {
+
+    // Cambiar el botón activo
+    document
+        .querySelectorAll(".filtro")
+        .forEach(btn => {
+            btn.classList.remove("activo");
+        });
+
+    boton.classList.add("activo");
+
+
+    // Cargar correos desde Spring Boot
+    await cargarPorPeriodo(periodo);
+
+
+    // Activar el flujo de n8n
+    await cargarResumen(periodo);
+}
+
+async function cargarPorPeriodo(periodo, boton) {
 
     // Quitar rojo a todos
     document
@@ -160,5 +180,53 @@ async function cargarResumen(periodo) {
     mostrarCorreos(correos);
 
     cargarResumen(periodo);
-}*/
-cargarPorPeriodo("semana");
+}
+
+async function cargarResumen(periodo) {
+
+    const textoResumen =
+        document.getElementById("textoResumen");
+
+    textoResumen.textContent =
+        "Analizando correos...";
+
+    try {
+
+        const respuesta = await fetch(
+            "http://localhost:5678/webhook/resumen-correos",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    periodo: periodo
+                })
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error(
+                "Error generando el resumen"
+            );
+        }
+
+        const datos =
+            await respuesta.json();
+
+        textoResumen.textContent =
+            datos.resumen;
+
+    } catch (error) {
+
+        console.error(
+            "Error:",
+            error
+        );
+
+        textoResumen.textContent =
+            "No se pudo generar el resumen.";
+    }
+}
